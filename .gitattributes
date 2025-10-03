@@ -1,5 +1,5 @@
 * text=auto
 #handles line endings for all files
-
 package-lock.json text
 #ensures package-lock.json uses LF line endings
+#to avoid issues on different OS
