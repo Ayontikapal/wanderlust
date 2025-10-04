@@ -7,9 +7,13 @@ const ejsMate =require('ejs-mate');
 const ExpressError=require("./utils/ExpressError.js");
 const session = require('express-session');
 const flash = require('connect-flash');
+const passport =require("passport");
+const LocalStrategy = require('passport-local');
+const User = require('./models/user.js');
 
-const listings=require("./routes/listing.js");
-const reviews=require("./routes/review.js");
+const listingsRouter=require("./routes/listing.js");
+const reviewsRouter=require("./routes/review.js");
+const userRouter=require("./routes/user.js");
 
 main()
 .then(()=>{
@@ -42,8 +46,15 @@ app.get("/",(req,res)=>{
     res.send("root is working");
 });
 
-app.use(session(sessionOptions));
-app.use(flash());
+app.use(session(sessionOptions));//to use session
+app.use(flash());//to use flash
+
+//passport configuration
+app.use(passport.initialize()); //to initialize passport
+app.use(passport.session()); //to use passport sessions
+passport.use(new LocalStrategy(User.authenticate())); //to use local strategy to authenticate users
+passport.serializeUser(User.serializeUser()); //to serialize users
+passport.deserializeUser(User.deserializeUser()); //to deserialize users
 
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success");
@@ -51,8 +62,15 @@ app.use((req,res,next)=>{
     next();
 });
 
-app.use("/listings", listings);
-app.use("/listings/:id/reviews", reviews);
+app.get("/demoUser",async(req,res)=>{
+    const user=new User({email:"janedoe@gmail.com", username:"janedoe"});
+    const newUser=await User.register(user,"chicken");
+    res.send(newUser);
+});
+
+app.use("/listings", listingsRouter);
+app.use("/listings/:id/reviews", reviewsRouter);
+app.use("/", userRouter);
 
 app.all(/.*/, (req,res,next)=>{
     next(new ExpressError("Page Not Found",404));
