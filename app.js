@@ -59,14 +59,15 @@ passport.deserializeUser(User.deserializeUser()); //to deserialize users
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success");
     res.locals.error=req.flash("error");
+    res.locals.currUser=req.user;
     next();
 });
 
-app.get("/demoUser",async(req,res)=>{
-    const user=new User({email:"janedoe@gmail.com", username:"janedoe"});
-    const newUser=await User.register(user,"chicken");
-    res.send(newUser);
-});
+// app.get("/demoUser",async(req,res)=>{
+//     const user=new User({email:"janedoe@gmail.com", username:"janedoe"});
+//     const newUser=await User.register(user,"chicken");
+//     res.send(newUser);
+// });
 
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
