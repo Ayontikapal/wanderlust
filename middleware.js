@@ -1,4 +1,5 @@
 const Listing=require("./models/listing");
+const Review=require("./models/review");
 const { listingSchema, reviewSchema }=require("./schema.js");
 const ExpressError=require("./utils/ExpressError.js");
 
@@ -48,4 +49,14 @@ module.exports.validateReview=(req,res,next)=>{
     else{
         next();
     }
+};
+
+module.exports.isReviewAuthor=async(req,res,next)=>{
+    const {id, reviewId}=req.params;
+    const review=await Review.findById(reviewId);
+    if(!review.author.equals(req.user._id)){
+        req.flash("error", "You do not have permission to do that!");
+        return res.redirect(`/listings/${id}`);
+    }
+    next();
 };
