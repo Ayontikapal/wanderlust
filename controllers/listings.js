@@ -26,8 +26,11 @@ module.exports.show=async (req,res)=>{
 
 //create
 module.exports.create=async(req,res)=>{
+    let url= req.file.path;
+    let filename= req.file.filename;
     const newListing =new Listing(req.body.listing);
     newListing.owner=req.user._id;
+    newListing.image={filename, url};
     await newListing.save();
     req.flash("success", "New Listing created successfully!");
     res.redirect("/listings");
@@ -41,22 +44,21 @@ module.exports.edit=async (req,res)=>{
         req.flash("error", "Listing you requested for does not exist!");
         return res.redirect("/listings");
     }
-    res.render("listings/edit.ejs",{listing});
+    let originalListing= listing.image.url;
+    originalListing= originalListing.replace("/upload","/upload/h_250,w_250");
+    res.render("listings/edit.ejs",{listing, originalListing});
 };
 
 //update
 module.exports.update=async (req, res) => {
   let { id } = req.params;
-  let { listing } = req.body;
-  let updateData = {...listing};
-  // If user provided an image URL, add it
-  if (listing.image) {
-    updateData.image = {
-      filename: "listingimage", // default filename
-      url: listing.image        // url from form
-    };
+  let listing =await Listing.findByIdAndUpdate(id, {...req.body.listing});
+  if(req.file){
+    let url = req.file.path;
+    let filename = req.file.filename;
+    listing.image={ url, filename};
+    await listing.save();
   }
-  await Listing.findByIdAndUpdate(id, updateData, { runValidators: true });
   req.flash("success", "Listing Updated!");
   res.redirect(`/listings/${id}`);
 };
