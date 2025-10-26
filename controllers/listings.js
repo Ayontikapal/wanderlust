@@ -11,12 +11,9 @@ const client = nominatim.createClient({
 module.exports.index = async(req,res)=>{
     const { category } = req.query; // get ?category= from URL
   let allListings;
-
   if (category) {
-    // if a category filter is applied
     allListings = await Listing.find({ category });
   } else {
-    // otherwise show all
     allListings = await Listing.find({});
   }
     res.render("listings/index.ejs",{allListings, category});
