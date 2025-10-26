@@ -7,6 +7,3 @@
       window.location.href = `/listings?category=${encodeURIComponent(category)}`;
     });
   });
-
-
-
