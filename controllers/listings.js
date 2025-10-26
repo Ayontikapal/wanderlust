@@ -1,9 +1,25 @@
 const Listing = require("../models/listing");
+const nominatim = require('nominatim-client');
+
+const client = nominatim.createClient({
+  useragent: `WanderlustApp/1.0 (${process.env.NOMINATIM_EMAIL})`,
+  referer: 'http://localhost:3000/listings'
+});
+
 
 //index
 module.exports.index = async(req,res)=>{
-    const allListings= await Listing.find({});
-    res.render("listings/index.ejs",{allListings});
+    const { category } = req.query; // get ?category= from URL
+  let allListings;
+
+  if (category) {
+    // if a category filter is applied
+    allListings = await Listing.find({ category });
+  } else {
+    // otherwise show all
+    allListings = await Listing.find({});
+  }
+    res.render("listings/index.ejs",{allListings, category});
 };
 
 //new
@@ -26,10 +42,20 @@ module.exports.show=async (req,res)=>{
 
 //create
 module.exports.create=async(req,res)=>{
+    let {location}=req.body.listing;
+    let coordinate = {
+       q: `${location}`,
+       addressdetails: '1'
+    };
+    const result = await client.search(coordinate);
+    const geometry = result.length > 0
+      ? { type: "Point", coordinates: [parseFloat(result[0].lon), parseFloat(result[0].lat)] }
+      : { type: "Point", coordinates: [0, 0] };
     let url= req.file.path;
     let filename= req.file.filename;
     const newListing =new Listing(req.body.listing);
     newListing.owner=req.user._id;
+    newListing.geometry= geometry;
     newListing.image={filename, url};
     await newListing.save();
     req.flash("success", "New Listing created successfully!");
@@ -45,7 +71,7 @@ module.exports.edit=async (req,res)=>{
         return res.redirect("/listings");
     }
     let originalListing= listing.image.url;
-    originalListing= originalListing.replace("/upload","/upload/h_250,w_250");
+    originalListing= originalListing.replace("/upload","/upload/w_200");
     res.render("listings/edit.ejs",{listing, originalListing});
 };
 
@@ -68,4 +94,19 @@ module.exports.delete=async(req,res)=>{
     let deletedListing =await Listing.findByIdAndDelete(id);
     req.flash("success", "Listing Deleted!");
     res.redirect("/listings");
+};
+
+module.exports.searchListing=async (req, res) => {
+  const query = req.query.q;
+    const listings = query? await Listing.find({
+          $or: [
+            { title: { $regex: query, $options: "i" } },
+            { location: { $regex: query, $options: "i" } },
+            { country: { $regex: query, $options: "i" } },
+            { description: { $regex: query, $options: "i" } },
+          ],
+        })
+      : await Listing.find({});
+
+    res.render("listings/index", { allListings: listings, searchQuery: query });
 };

@@ -46,10 +46,6 @@ const sessionOptions={
     }
 };
 
-app.get("/",(req,res)=>{
-    res.send("root is working");
-});
-
 app.use(session(sessionOptions));//to use session
 app.use(flash());//to use flash
 
@@ -84,7 +80,8 @@ app.use((err,req,res,next)=>{
     const { statusCode=500,message="Something went wrong" }=err;
     res.status(statusCode).render("error.ejs",{err});
     // res.status(statusCode).send(message);
-    // res.send("Oh no, something went wrong!!");
+    // res.send("Oh no, something went wrong!!");git status
+
 });
 
 app.listen(3000,()=>{

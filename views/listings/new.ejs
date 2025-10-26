@@ -38,13 +38,106 @@
       </div>
       </div>
 
-      <div class="mb-3 col-md-8">
+      <div class="mb-3 col-md-4">
         <label for="country" class="form-label">Country</label>
       <input name="listing[country]" placeholder="India" type="text" class="form-control" required/>
       <div class="invalid-feedback">
         Country name should be valid
       </div>
       </div>
+  <div class="mb-3 col-md-4">
+  <label for="Category" class="form-label">Category</label>
+  <div class="dropdown">
+    <button
+      class="btn btn-light dropdown-toggle" type="button"
+      id="dropdownMenuButton"
+      data-bs-toggle="dropdown"
+      aria-expanded="false">
+      Select Categories
+    </button>
+    <ul class="dropdown-menu p-2" aria-labelledby="dropdownMenuButton">
+      <li>
+        <div class="form-check">
+          <input class="form-check-input category-checkbox" name="listing[category][]" type="checkbox" value="Trending" id="trending">
+          <label class="form-check-label" for="trending">Trending</label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check">
+          <input class="form-check-input category-checkbox" name="listing[category][]" type="checkbox" value="Rooms" id="rooms">
+          <label class="form-check-label" for="rooms">Rooms</label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check">
+          <input class="form-check-input category-checkbox" name="listing[category][]" type="checkbox" value="Iconic Cities" id="iconic-cities">
+          <label class="form-check-label" for="iconic cities">Iconic Cities</label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check">
+          <input class="form-check-input category-checkbox" name="listing[category][]" type="checkbox" value="Amazing Pools" id="amazing-pools">
+          <label class="form-check-label" for="amazing pools">Amazing pools</label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check">
+          <input class="form-check-input category-checkbox" name="listing[category][]" type="checkbox" value="Cabins" id="cabins">
+          <label class="form-check-label" for="cabins">Cabins</label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check">
+          <input class="form-check-input category-checkbox" name="listing[category][]" type="checkbox" value="Amazing View" id="amazing-view">
+          <label class="form-check-label" for="amazing view">Amazing View</label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check">
+          <input class="form-check-input category-checkbox" name="listing[category][]" type="checkbox" value="Camping" id="camping">
+          <label class="form-check-label" for="camping">Camping</label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check">
+          <input class="form-check-input category-checkbox" name="listing[category][]" type="checkbox" value="Farms" id="farms">
+          <label class="form-check-label" for="farms">Farms</label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check">
+          <input class="form-check-input category-checkbox" name="listing[category][]" type="checkbox" value="Arctic" id="arctic">
+          <label class="form-check-label" for="arctic">Arctic</label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check">
+          <input class="form-check-input category-checkbox" name="listing[category][]" type="checkbox" value="Castles" id="castles">
+          <label class="form-check-label" for="castles">Castles</label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check">
+          <input class="form-check-input category-checkbox" name="listing[category][]" type="checkbox" value="Mountains" id="mountains">
+          <label class="form-check-label" for="mountains">Mountains</label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check">
+          <input class="form-check-input category-checkbox" name="listing[category][]" type="checkbox" value="Beaches" id="beaches">
+          <label class="form-check-label" for="beaches">Beaches</label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check">
+          <input class="form-check-input category-checkbox" name="listing[category][]" type="checkbox" value="Forests" id="forests">
+          <label class="form-check-label" for="forests">Forests</label>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
     </div>
       <div class="mb-3">
         <label for="location" class="form-label">Location</label>
@@ -62,4 +155,19 @@
     </form>
    </div>
   </div>
+  <script>
+  const checkboxes = document.querySelectorAll('.category-checkbox');
+  const dropdownButton = document.getElementById('dropdownMenuButton');
+
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+      const selected = Array.from(checkboxes)
+        .filter(c => c.checked)
+        .map(c => c.value);
+      dropdownButton.textContent = selected.length
+        ? selected.join(', ')
+        : 'Select Categories';
+    });
+  });
+</script>
 </body>
