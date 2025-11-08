@@ -1,2 +1,2 @@
 Wanderlust
-Full stack project
+Full stack Travel Booking Platform
