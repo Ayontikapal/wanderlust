@@ -16,6 +16,7 @@ const listingSchema =new Schema({
         },
         url:{
             type:String,
+            default:"https://thumbs.dreamstime.com/b/city-park-pond-shore-alley-20238927.jpg"
         }
     },
     price:{
